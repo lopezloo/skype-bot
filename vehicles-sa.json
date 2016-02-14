@@ -1,0 +1,971 @@
+{
+  "catalog": {
+    "type": "vehicle",
+    "game": "SA",
+    "groups": [
+      {
+        "name": "Aircraft",
+        "group": [
+          {
+            "name": "Helicopters",
+            "vehicle": [
+              {
+                "id": "548",
+                "name": "Cargobob"
+              },
+              {
+                "id": "425",
+                "name": "Hunter"
+              },
+              {
+                "id": "417",
+                "name": "Leviathan"
+              },
+              {
+                "id": "487",
+                "name": "Maverick"
+              },
+              {
+                "id": "488",
+                "name": "News Chopper"
+              },
+              {
+                "id": "497",
+                "name": "Police Maverick"
+              },
+              {
+                "id": "563",
+                "name": "Raindance"
+              },
+              {
+                "id": "447",
+                "name": "Seasparrow"
+              },
+              {
+                "id": "469",
+                "name": "Sparrow"
+              }
+            ]
+          },
+          {
+            "name": "Planes, Jets and Airlines",
+            "vehicle": [
+              {
+                "id": "592",
+                "name": "Andromada"
+              },
+              {
+                "id": "577",
+                "name": "AT400"
+              },
+              {
+                "id": "511",
+                "name": "Beagle"
+              },
+              {
+                "id": "512",
+                "name": "Cropduster"
+              },
+              {
+                "id": "593",
+                "name": "Dodo"
+              },
+              {
+                "id": "520",
+                "name": "Hydra"
+              },
+              {
+                "id": "553",
+                "name": "Nevada"
+              },
+              {
+                "id": "476",
+                "name": "Rustler"
+              },
+              {
+                "id": "519",
+                "name": "Shamal"
+              },
+              {
+                "id": "460",
+                "name": "Skimmer"
+              },
+              {
+                "id": "513",
+                "name": "Stuntplane"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Bikes",
+        "group": [
+          {
+            "name": "Motorbikes",
+            "vehicle": [
+              {
+                "id": "581",
+                "name": "BF400"
+              },
+              {
+                "id": "462",
+                "name": "Faggio"
+              },
+              {
+                "id": "521",
+                "name": "FCR900"
+              },
+              {
+                "id": "463",
+                "name": "Freeway"
+              },
+              {
+                "id": "523",
+                "name": "HPV1000"
+              },
+              {
+                "id": "522",
+                "name": "NRG500"
+              },
+              {
+                "id": "461",
+                "name": "PCJ600"
+              },
+              {
+                "id": "448",
+                "name": "Pizza Boy"
+              },
+              {
+                "id": "468",
+                "name": "Sanchez"
+              },
+              {
+                "id": "586",
+                "name": "Wayfarer"
+              },
+              {
+                "id": "471",
+                "name": "Quad"
+              }
+            ]
+          },
+          {
+            "name": "Bicycles",
+            "vehicle": [
+              {
+                "id": "509",
+                "name": "Bike"
+              },
+              {
+                "id": "481",
+                "name": "BMX"
+              },
+              {
+                "id": "510",
+                "name": "Mountain bike"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Boats",
+        "vehicle": [
+          {
+            "id": "472",
+            "name": "Coastguard"
+          },
+          {
+            "id": "473",
+            "name": "Dinghy"
+          },
+          {
+            "id": "493",
+            "name": "Jetmax"
+          },
+          {
+            "id": "595",
+            "name": "Launch"
+          },
+          {
+            "id": "484",
+            "name": "Marquis"
+          },
+          {
+            "id": "430",
+            "name": "Predator"
+          },
+          {
+            "id": "453",
+            "name": "Reefer"
+          },
+          {
+            "id": "452",
+            "name": "Speeder"
+          },
+          {
+            "id": "446",
+            "name": "Squalo"
+          },
+          {
+            "id": "454",
+            "name": "Tropic"
+          }
+        ]
+      },
+      {
+        "name": "Cars",
+        "group": [
+          {
+            "name": "Sports Cars",
+            "vehicle": [
+              {
+                "id": "602",
+                "name": "Alpha"
+              },
+              {
+                "id": "429",
+                "name": "Banshee"
+              },
+              {
+                "id": "402",
+                "name": "Buffalo"
+              },
+              {
+                "id": "541",
+                "name": "Bullet"
+              },
+              {
+                "id": "415",
+                "name": "Cheetah"
+              },
+              {
+                "id": "480",
+                "name": "Comet"
+              },
+              {
+                "id": "562",
+                "name": "Elegy"
+              },
+              {
+                "id": "587",
+                "name": "Euros"
+              },
+              {
+                "id": "565",
+                "name": "Flash"
+              },
+              {
+                "id": "411",
+                "name": "Infernus"
+              },
+              {
+                "id": "559",
+                "name": "Jester"
+              },
+              {
+                "id": "603",
+                "name": "Phoenix"
+              },
+              {
+                "id": "560",
+                "name": "Sultan"
+              },
+              {
+                "id": "506",
+                "name": "Super GT"
+              },
+              {
+                "id": "451",
+                "name": "Turismo"
+              },
+              {
+                "id": "558",
+                "name": "Uranus"
+              },
+              {
+                "id": "555",
+                "name": "Windsor"
+              },
+              {
+                "id": "477",
+                "name": "ZR350"
+              }
+            ]
+          },
+          {
+            "name": "Lowriders",
+            "vehicle": [
+              {
+                "id": "536",
+                "name": "Blade"
+              },
+              {
+                "id": "575",
+                "name": "Broadway"
+              },
+              {
+                "id": "518",
+                "name": "Buccaneer"
+              },
+              {
+                "id": "419",
+                "name": "Esperanto"
+              },
+              {
+                "id": "534",
+                "name": "Remington"
+              },
+              {
+                "id": "567",
+                "name": "Savanna"
+              },
+              {
+                "id": "535",
+                "name": "Slamvan"
+              },
+              {
+                "id": "576",
+                "name": "Tornado"
+              },
+              {
+                "id": "412",
+                "name": "Voodoo"
+              }
+            ]
+          },
+          {
+            "name": "2Door",
+            "vehicle": [
+              {
+                "id": "496",
+                "name": "Blista Compact"
+              },
+              {
+                "id": "401",
+                "name": "Bravura"
+              },
+              {
+                "id": "527",
+                "name": "Cadrona"
+              },
+              {
+                "id": "542",
+                "name": "Clover"
+              },
+              {
+                "id": "533",
+                "name": "Feltzer"
+              },
+              {
+                "id": "526",
+                "name": "Fortune"
+              },
+              {
+                "id": "474",
+                "name": "Hermes"
+              },
+              {
+                "id": "545",
+                "name": "Hustler"
+              },
+              {
+                "id": "517",
+                "name": "Majestic"
+              },
+              {
+                "id": "410",
+                "name": "Manana"
+              },
+              {
+                "id": "436",
+                "name": "Previon"
+              },
+              {
+                "id": "475",
+                "name": "Sabre"
+              },
+              {
+                "id": "439",
+                "name": "Stallion"
+              },
+              {
+                "id": "549",
+                "name": "Tampa"
+              },
+              {
+                "id": "491",
+                "name": "Virgo"
+              }
+            ]
+          },
+          {
+            "name": "4Door",
+            "vehicle": [
+              {
+                "id": "445",
+                "name": "Admiral"
+              },
+              {
+                "id": "438",
+                "name": "Cabbie"
+              },
+              {
+                "id": "507",
+                "name": "Elegant"
+              },
+              {
+                "id": "585",
+                "name": "Emperor"
+              },
+              {
+                "id": "466",
+                "name": "Glendale"
+              },
+              {
+                "id": "492",
+                "name": "Greenwood"
+              },
+              {
+                "id": "546",
+                "name": "Intruder"
+              },
+              {
+                "id": "551",
+                "name": "Merit"
+              },
+              {
+                "id": "516",
+                "name": "Nebula"
+              },
+              {
+                "id": "467",
+                "name": "Oceanic"
+              },
+              {
+                "id": "426",
+                "name": "Premier"
+              },
+              {
+                "id": "547",
+                "name": "Primo"
+              },
+              {
+                "id": "405",
+                "name": "Sentinel"
+              },
+              {
+                "id": "580",
+                "name": "Stafford"
+              },
+              {
+                "id": "409",
+                "name": "Stretch"
+              },
+              {
+                "id": "550",
+                "name": "Sunrise"
+              },
+              {
+                "id": "566",
+                "name": "Tahoma"
+              },
+              {
+                "id": "420",
+                "name": "Taxi"
+              },
+              {
+                "id": "540",
+                "name": "Vincent"
+              },
+              {
+                "id": "421",
+                "name": "Washington"
+              },
+              {
+                "id": "529",
+                "name": "Willard"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Emergency",
+        "vehicle": [
+          {
+            "id": "416",
+            "name": "Ambulance"
+          },
+          {
+            "id": "433",
+            "name": "Barracks"
+          },
+          {
+            "id": "427",
+            "name": "Enforcer"
+          },
+          {
+            "id": "490",
+            "name": "FBI rancher"
+          },
+          {
+            "id": "528",
+            "name": "FBI truck"
+          },
+          {
+            "id": "407",
+            "name": "Fire truck"
+          },
+          {
+            "id": "544",
+            "name": "Fire truck (ladder)"
+          },
+          {
+            "id": "596",
+            "name": "Police car (LS)"
+          },
+          {
+            "id": "598",
+            "name": "Police car (LV)"
+          },
+          {
+            "id": "597",
+            "name": "Police car (SF)"
+          },
+          {
+            "id": "599",
+            "name": "Police ranger"
+          },
+          {
+            "id": "432",
+            "name": "Rhino"
+          },
+          {
+            "id": "601",
+            "name": "S.W.A.T."
+          }
+        ]
+      },
+      {
+        "name": "Heavy Vehicles",
+        "group": [
+          {
+            "name": "Industrial",
+            "vehicle": [
+              {
+                "id": "524",
+                "name": "Cement truck"
+              },
+              {
+                "id": "578",
+                "name": "DFT30"
+              },
+              {
+                "id": "486",
+                "name": "Dozer"
+              },
+              {
+                "id": "406",
+                "name": "Dumper"
+              },
+              {
+                "id": "573",
+                "name": "Dune"
+              },
+              {
+                "id": "455",
+                "name": "Flatbed"
+              },
+              {
+                "id": "530",
+                "name": "Forklift"
+              },
+              {
+                "id": "403",
+                "name": "Linerunner"
+              },
+              {
+                "id": "443",
+                "name": "Packer"
+              },
+              {
+                "id": "515",
+                "name": "Roadtrain"
+              },
+              {
+                "id": "574",
+                "name": "Sweeper"
+              },
+              {
+                "id": "514",
+                "name": "Tanker"
+              },
+              {
+                "id": "525",
+                "name": "Towtruck"
+              },
+              {
+                "id": "408",
+                "name": "Trashmaster"
+              },
+              {
+                "id": "552",
+                "name": "Utility van"
+              }
+            ]
+          },
+          {
+            "name": "Trailers",
+            "vehicle": [
+              {
+                "id": "606",
+                "name": "Baggage trailer (covered)"
+              },
+              {
+                "id": "607",
+                "name": "Baggage trailer (Uncovered)"
+              },
+              {
+                "id": "610",
+                "name": "Farm trailer"
+              },
+              {
+                "id": "537",
+                "name": "Freight train"
+              },
+              {
+                "id": "590",
+                "name": "Freight train boxcar"
+              },
+              {
+                "id": "569",
+                "name": "Freight train flatbed"
+              },
+              {
+                "id": "611",
+                "name": "Street Clean trailer"
+              },
+              {
+                "id": "584",
+                "name": "Gas trailer"
+              },
+              {
+                "id": "608",
+                "name": "Trailer 1"
+              },
+              {
+                "id": "435",
+                "name": "Trailer 2"
+              },
+              {
+                "id": "450",
+                "name": "Trailer 3"
+              },
+              {
+                "id": "591",
+                "name": "Trailer 4"
+              }
+            ]
+          },
+          {
+            "name": "Trucks",
+            "vehicle": [
+              {
+                "id": "499",
+                "name": "Benson"
+              },
+              {
+                "id": "609",
+                "name": "Black Boxville"
+              },
+              {
+                "id": "422",
+                "name": "Bobcat"
+              },
+              {
+                "id": "498",
+                "name": "Boxville"
+              },
+              {
+                "id": "414",
+                "name": "Mule"
+              },
+              {
+                "id": "600",
+                "name": "Picador"
+              },
+              {
+                "id": "543",
+                "name": "Sadler"
+              },
+              {
+                "id": "428",
+                "name": "Securicar"
+              },
+              {
+                "id": "478",
+                "name": "Walton"
+              },
+              {
+                "id": "456",
+                "name": "Yankee"
+              },
+              {
+                "id": "554",
+                "name": "Yosemite"
+              }
+            ]
+          },
+          {
+            "name": "Vans",
+            "vehicle": [
+              {
+                "id": "459",
+                "name": "Berkley's RC van"
+              },
+              {
+                "id": "482",
+                "name": "Burrito"
+              },
+              {
+                "id": "483",
+                "name": "Camper"
+              },
+              {
+                "id": "508",
+                "name": "Journey"
+              },
+              {
+                "id": "418",
+                "name": "Moonbeam"
+              },
+              {
+                "id": "582",
+                "name": "News van"
+              },
+              {
+                "id": "413",
+                "name": "Pony"
+              },
+              {
+                "id": "440",
+                "name": "Rumpo"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Misc",
+        "group": [
+          {
+            "name": "Other",
+            "vehicle": [
+              {
+                "id": "485",
+                "name": "Baggage"
+              },
+              {
+                "id": "568",
+                "name": "Bandito"
+              },
+              {
+                "id": "424",
+                "name": "BF Injection"
+              },
+              {
+                "id": "504",
+                "name": "Bloodring Banger"
+              },
+              {
+                "id": "431",
+                "name": "Bus"
+              },
+              {
+                "id": "457",
+                "name": "Caddy"
+              },
+              {
+                "id": "437",
+                "name": "Coach"
+              },
+              {
+                "id": "532",
+                "name": "Combine harvester"
+              },
+              {
+                "id": "588",
+                "name": "Hotdog"
+              },
+              {
+                "id": "434",
+                "name": "Hotknife"
+              },
+              {
+                "id": "494",
+                "name": "Hotring racer"
+              },
+              {
+                "id": "502",
+                "name": "Hotring racer 2"
+              },
+              {
+                "id": "503",
+                "name": "Hotring racer 3"
+              },
+              {
+                "id": "444",
+                "name": "Monster"
+              },
+              {
+                "id": "556",
+                "name": "Monster 2"
+              },
+              {
+                "id": "557",
+                "name": "Monster 3"
+              },
+              {
+                "id": "572",
+                "name": "Mower"
+              },
+              {
+                "id": "423",
+                "name": "Mr. Whoopee"
+              },
+              {
+                "id": "571",
+                "name": "Kart"
+              },
+              {
+                "id": "531",
+                "name": "Tractor"
+              },
+              {
+                "id": "583",
+                "name": "Tug"
+              },
+              {
+                "id": "539",
+                "name": "Vortex"
+              }
+            ]
+          },
+          {
+            "name": "RC",
+            "vehicle": [
+              {
+                "id": "441",
+                "name": "RC Bandit"
+              },
+              {
+                "id": "464",
+                "name": "RC Baron"
+              },
+              {
+                "id": "594",
+                "name": "RC Flower Pot"
+              },
+              {
+                "id": "501",
+                "name": "RC Goblin"
+              },
+              {
+                "id": "465",
+                "name": "RC Raider"
+              },
+              {
+                "id": "564",
+                "name": "RC Tiger"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "SUVs and Wagons",
+        "vehicle": [
+          {
+            "id": "589",
+            "name": "Club"
+          },
+          {
+            "id": "579",
+            "name": "Huntley"
+          },
+          {
+            "id": "400",
+            "name": "Landstalker"
+          },
+          {
+            "id": "500",
+            "name": "Mesa"
+          },
+          {
+            "id": "470",
+            "name": "Patriot"
+          },
+          {
+            "id": "404",
+            "name": "Perennial"
+          },
+          {
+            "id": "489",
+            "name": "Rancher"
+          },
+          {
+            "id": "479",
+            "name": "Regina"
+          },
+          {
+            "id": "442",
+            "name": "Romero"
+          },
+          {
+            "id": "495",
+            "name": "Sandking"
+          },
+          {
+            "id": "458",
+            "name": "Solair"
+          },
+          {
+            "id": "561",
+            "name": "Stratum"
+          }
+        ]
+      },
+      {
+        "name": "Trains",
+        "vehicle": [
+          {
+            "id": "449",
+            "name": "Tram"
+          },
+          {
+            "id": "537",
+            "name": "Freight"
+          },
+          {
+            "id": "538",
+            "name": "Brown Streak"
+          },
+          {
+            "id": "570",
+            "name": "Brown Streak Carriage"
+          },
+          {
+            "id": "569",
+            "name": "Flat Freight"
+          },
+          {
+            "id": "590",
+            "name": "Box Freight"
+          }
+        ]
+      }     
+    ]
+  }
+}
