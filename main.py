@@ -4,12 +4,18 @@ import urllib, urllib2, json, time, re, time, datetime, sys, random
 from threading import Timer
 from difflib import SequenceMatcher
 
-skype = Skype4Py.Skype()
-skype.Attach()
+try:
+    skype = Skype4Py.Skype()
+    skype.Attach()
+except Exception:
+    print( "Can't attach to Skype." )
+    quit()
 
-testChat = ''
-mtaChat = ''
-trChat = ''
+chats = {
+          "test" :  "#lopezloo/$f6d1b455dba8824",
+          "mta"  :  "#divx92/$18d4d85908c14588",
+          "tr"   :  "#lopezloo/$1df2f3dc7ef04417"
+}
 
 def getURL ( url ):
     hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
@@ -57,7 +63,7 @@ def OnMessageStatus ( message, status ):
         print('OnMessageStatus RECEIVED: ' + message.Body.encode('utf-8'))
         if message.Body == "!help" or message.Body == "!pomoc" or message.Body == "!cmd" or message.Body == "!cmds":
             txt = "!twitch [nick]\n!twitchtop [opcjonalnie kategoria] - top streamy z danej kategorii\n!hitbox [nick]\n!topic\n!lines - ilosć linii w kodzie\n!id [pojazd/kategoria]\n!steam\n!ets\n!bandit".decode('utf-8')
-            if message.Chat.Name == mtaChat:
+            if message.Chat.Name == chats["mta"]:
                 txt = txt + "\n!w(iki) [tytuł]".decode('utf-8')
             message.Chat.SendMessage(txt)
             return 
@@ -163,7 +169,7 @@ def OnMessageStatus ( message, status ):
             return
 
         # MTA wiki syntax + link generator
-        if (message.Chat.Name == mtaChat or message.Chat.Name == testChat) and (message.Body.find('!wiki ', 0, 6) == 0 or message.Body.find('!w ', 0, 3) == 0):
+        if (message.Chat.Name == chats["mta"] or message.Chat.Name == chats["test"]) and (message.Body.find('!wiki ', 0, 6) == 0 or message.Body.find('!w ', 0, 3) == 0):
             title = message.Body[ message.Body.find(' ') + 1 : ]
             source = getURL("https://wiki.multitheftauto.com/api.php?action=query&list=search&format=json&prop=revisions&rvprop=content&srsearch=" + title)
             if source is None:
@@ -506,7 +512,7 @@ def OnMessageStatus ( message, status ):
             #    return           
 
     if status == 'RECEIVED' or status == 'SENT':
-        if (message.Chat.Name == mtaChat or message.Chat.Name == testChat) and message.Body.find('#') != -1:
+        if (message.Chat.Name == chats["mta"] or message.Chat.Name == chats["test"]) and message.Body.find('#') != -1:
             bugID_start = message.Body.find('#') + 1
             bugID_end = message.Body.find(' ', bugID_start)
             if bugID_end == -1:
@@ -555,7 +561,7 @@ def checkGitHub ( ):
         commitTime = time.mktime(datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ").timetuple()) # timestamp
         print( str(commitTime) + " > " + str(settings["lastCommitTime"]) )
         if commitTime > settings["lastCommitTime"]:
-            sendMessageToChat( mtaChat, "[commit] " + commit["commit"]["message"] + " @ " + commit["author"]["login"] + "\n" + commit["html_url"] )
+            sendMessageToChat( chats["mta"], "[commit] " + commit["commit"]["message"] + " @ " + commit["author"]["login"] + "\n" + commit["html_url"] )
             settings["lastCommitTime"] = commitTime
             saveSettings()
 
@@ -587,7 +593,7 @@ def checkMantisBug ( bugID ):
 def checkMantis ( ):
     name, severity, status = checkMantisBug ( settings["lastBugID"] + 1 )
     if name is not None:
-        sendMessageToChat ( mtaChat, "[" + severity + "/" + status + "] " + name + "\nhttps://bugs.mtasa.com/view.php?id=" + str(settings["lastBugID"] + 1) )
+        sendMessageToChat ( chats["mta"], "[" + severity + "/" + status + "] " + name + "\nhttps://bugs.mtasa.com/view.php?id=" + str(settings["lastBugID"] + 1) )
         settings["lastBugID"] = settings["lastBugID"] + 1
         saveSettings ()
     Timer( 60*10, checkMantis ).start()
@@ -601,7 +607,7 @@ checkMantis()
 #        return
 #
 #    if data.find( '<div id="header">PROTOTYPES REMAINING:') != -1 and data.find( '<div id="header">PROTOTYPES REMAINING: 0</div>' ) == -1:
-#        sendMessageToChat ( testChat, "lopez, prototypy!\nhttp://prototypes.facepunch.com\n" + data )
+#        sendMessageToChat ( chats["test"], "lopez, prototypy!\nhttp://prototypes.facepunch.com\n" + data )
 #    else:
 #        Timer( 60*10, checkPrototypes ).start()
 #
@@ -705,7 +711,7 @@ def checkFreeGamesSubreddit ( ):
 
     for link in data["data"]["children"]:
         if link["data"]["created_utc"] > settings["lastFGTime"]:
-            sendMessageToChat ( trChat, link["data"]["title"] + "\nhttps://reddit.com" + link["data"]["permalink"] )
+            sendMessageToChat ( chats["tr"], link["data"]["title"] + "\nhttps://reddit.com" + link["data"]["permalink"] )
             settings["lastFGTime"] = link["data"]["created_utc"]
             saveSettings()
 
