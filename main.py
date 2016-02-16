@@ -32,8 +32,17 @@ def getURL ( url ):
     except Exception:
         return
 
-    content = page.read()
-    return content
+    return page.read()
+
+def getJSON ( url ):
+    data = getURL( url )
+    if data is None:
+        return
+    try:
+        data = json.loads( data )
+    except Exception:
+        return
+    return data
 
 def loadSettings ( ):
     # todo: create default settings file
@@ -49,40 +58,44 @@ def saveSettings ( ):
         f.write( json.dumps(settings) )
         f.close()
 
-def sendMessageToChat ( chatName, message ):
-    for chat in skype.Chats:
-        if chat.Name == chatName:
-            chat.SendMessage( message )
-            return
+def sendMessageToChat ( chat, message ):
+    message = message
+    if type(chat) is Skype4Py.chat.Chat:
+        # skype chat object
+        chat.SendMessage( message )
+    else:
+        # chat name
+        for chat in skype.Chats:
+            if chat.Name == chat:
+                chat.SendMessage( message )
+                return
 
 def OnMessageStatus ( message, status ):
     #if status == 'SENT' or status == 'RECEIVED':
     #print('OnMessageStatus status = ' + str(status) + " msg = " + str(message.Body))
     if status == 'RECEIVED':
-        #print( message.Chat.Name )
         print('OnMessageStatus RECEIVED: ' + message.Body.encode('utf-8'))
         if message.Body == "!help" or message.Body == "!pomoc" or message.Body == "!cmd" or message.Body == "!cmds":
-            txt = "!twitch [nick]\n!twitchtop [opcjonalnie kategoria] - top streamy z danej kategorii\n!hitbox [nick]\n!topic\n!lines - ilosć linii w kodzie\n!id [pojazd/kategoria]\n!steam\n!ets\n!bandit".decode('utf-8')
+            txt = "!twitch [nick]\n!twitchtop [opcjonalnie kategoria] - top streamy z danej kategorii\n!hitbox [nick]\n!topic\n!lines - ilosć linii w kodzie\n!id [pojazd/kategoria]\n!steam\n!ets\n!bandit\n!btc"
             if message.Chat.Name == chats["mta"]:
-                txt = txt + "\n!w(iki) [tytuł]".decode('utf-8')
-            message.Chat.SendMessage(txt)
+                txt = txt + "\n!w(iki) [tytuł]"
+            sendMessageToChat( message.Chat,txt)
             return 
 
         # Supposed to be current MTA version
         #if message.Body == "!ver":
-        #    message.Chat.SendMessage("no ja nie wiem")
+        #    sendMessageToChat( message.Chat, "no ja nie wiem")
         #    return
 
         # Twitch live status
         if message.Body.find('!twitch ', 0, 8) == 0:
             nick = message.Body[ message.Body.find(' ') + 1 : ]
-            sock = urllib.urlopen("https://api.twitch.tv/kraken/streams/" + nick)
-            source = sock.read()
-            sock.close()
-            data = json.loads(source)
+            data = getJSON ( "https://api.twitch.tv/kraken/streams/" + nick )
+            if data is None:
+                return
 
             if "status" in data and data["status"] == 404:
-                message.Chat.SendMessage("Nie ma takiego kanału.")
+                sendMessageToChat( message.Chat, "Nie ma takiego kanału.")
                 return
 
             if data["stream"] is not None:
@@ -93,11 +106,11 @@ def OnMessageStatus ( message, status ):
                 fps = str( int( round(data["stream"]["average_fps"]) ) )
 
                 if game:
-                    message.Chat.SendMessage( nick + " streamuje " + game + " (" + status + ", " + viewers + " widzów, ".decode('utf-8') + fps + " FPS)\nhttps://twitch.tv/" + nick )
+                    sendMessageToChat( message.Chat, nick + " streamuje " + game + " (" + status + ", " + viewers + " widzów, " + fps + " FPS)\nhttps://twitch.tv/" + nick )
                 else:
-                    message.Chat.SendMessage( nick + " prowadzi stream (" + status + ", " + viewers + " widzów, ".decode('utf-8') + fps + " FPS)\nhttps://twitch.tv/" + nick )
+                    sendMessageToChat( message.Chat, nick + " prowadzi stream (" + status + ", " + viewers + " widzów, " + fps + " FPS)\nhttps://twitch.tv/" + nick )
             else:
-                message.Chat.SendMessage( nick + " obecnie nic nie streamuje!" )
+                sendMessageToChat( message.Chat, nick + " obecnie nic nie streamuje!" )
             return
 
         # Top Twitch stream from selected category (or in all categories)
@@ -105,22 +118,23 @@ def OnMessageStatus ( message, status ):
             arg_pos = message.Body.find(' ') + 1
             if arg_pos != 0:
                 arg = message.Body[ arg_pos : ]
-                source = getURL("https://api.twitch.tv/kraken/search/games?type=suggest&live=1&limit=1&q=" + arg)
-                data = json.loads(source)
-
+                data = getJSON( "https://api.twitch.tv/kraken/search/games?type=suggest&live=1&limit=1&q=" + arg )
+                if data is None:
+                    return
                 if len(data["games"]) == 0:
-                    message.Chat.SendMessage("Nie ma takiej kategorii.")
+                    sendMessageToChat( message.Chat, "Nie ma takiej kategorii.")
                     return
 
                 arg = data["games"][0]["name"]
             else:
                 arg = ""
 
-            source = getURL( "https://api.twitch.tv/kraken/streams?limit=3&game=" + arg )
-            data = json.loads(source)
+            data = getJSON( "https://api.twitch.tv/kraken/streams?limit=3&game=" + arg )
+            if data is None:
+                return
 
             if len(data["streams"]) == 0:
-                message.Chat.SendMessage("Brak streamów w kategorii ".decode('utf-8') + arg)
+                sendMessageToChat( message.Chat, "Brak streamów w kategorii " + arg)
                 return
 
             txt = ""
@@ -130,64 +144,56 @@ def OnMessageStatus ( message, status ):
                 viewers = str(stream["viewers"])
                 fps = str( int( round(stream["average_fps"]) ) )
                 if len(arg) > 0:
-                    txt = txt + "\n" + str(k + 1) + ". " + nick + " (" + status + ", " + viewers + " widzów, ".decode('utf-8') + fps + " FPS) https://twitch.tv/" + nick
+                    txt = txt + "\n" + str(k + 1) + ". " + nick + " (" + status + ", " + viewers + " widzów, " + fps + " FPS) https://twitch.tv/" + nick
                 else:
                     game = stream["game"]
-                    txt = txt + "\n" + str(k + 1) + ". " + nick + " (" + game + ", " + status + ", " + viewers + " widzów, ".decode('utf-8') + fps + " FPS) https://twitch.tv/" + nick
+                    txt = txt + "\n" + str(k + 1) + ". " + nick + " (" + game + ", " + status + ", " + viewers + " widzów, " + fps + " FPS) https://twitch.tv/" + nick
 
             if len(arg) > 0:
-                message.Chat.SendMessage("Top 3 streamów z kategorii ".decode('utf-8') + arg + ":" + txt)
+                sendMessageToChat( message.Chat, "Top 3 streamów z kategorii " + arg + ":" + txt)
             else:
-                message.Chat.SendMessage("Top 3 streamów:".decode('utf-8') + txt)
+                sendMessageToChat( message.Chat, "Top 3 streamów:" + txt)
             return
 
         # Hitbox live status
         if message.Body.find('!hitbox ', 0, 8) == 0:
             nick = message.Body[ message.Body.find(' ') + 1 : ]
-            sock = urllib.urlopen("https://api.hitbox.tv/media/live/" + nick)
-            source = sock.read()
-            sock.close()
-            try:
-                data = json.loads(source)
-            except Exception:
-                message.Chat.SendMessage("Bliżej nieokreślony błąd.")
+            data = getJSON( "https://api.hitbox.tv/media/live/" + nick )
+            if data is None:
                 return
 
             if "error" in data:
-                message.Chat.SendMessage("Nie ma takiego kanału.")
+                sendMessageToChat( message.Chat, "Nie ma takiego kanału.")
                 return
 
             nick = data["livestream"][0]["media_display_name"]
             if data["livestream"][0]["media_is_live"] == "0":
-                message.Chat.SendMessage(nick + " obecnie nic nie streamuje!")
+                sendMessageToChat( message.Chat,nick + " obecnie nic nie streamuje!")
                 return
 
             game = data["livestream"][0]["category_name"]
             status = data["livestream"][0]["media_status"]
             viewers = data["livestream"][0]["category_viewers"]
-            message.Chat.SendMessage( nick + " streamuje " + game + " (" + status + ", " + viewers + " widzów)".decode('utf-8') + "\nhttps://hitbox.tv/" + nick )
+            sendMessageToChat( message.Chat, nick + " streamuje " + game + " (" + status + ", " + viewers + " widzów)" + "\nhttps://hitbox.tv/" + nick )
             return
 
         # MTA wiki syntax + link generator
         if (message.Chat.Name == chats["mta"] or message.Chat.Name == chats["test"]) and (message.Body.find('!wiki ', 0, 6) == 0 or message.Body.find('!w ', 0, 3) == 0):
             title = message.Body[ message.Body.find(' ') + 1 : ]
-            source = getURL("https://wiki.multitheftauto.com/api.php?action=query&list=search&format=json&prop=revisions&rvprop=content&srsearch=" + title)
-            if source is None:
+            data = getJSON( "https://wiki.multitheftauto.com/api.php?action=query&list=search&format=json&prop=revisions&rvprop=content&srsearch=" + title )
+            if data is None:
                 return
-            data = json.loads(source)
 
             if len(data["query"]["search"]) == 0:
-                message.Chat.SendMessage( "Nie ma takiej strony." )
+                sendMessageToChat( message.Chat, "Nie ma takiej strony." )
             else:
                 page = data["query"]["search"][0]
                 txt = "https://wiki.mtasa.com/wiki/" + page["title"].replace(" ", "_")
                 
                 # Syntax
-                sock = urllib.urlopen("https://wiki.multitheftauto.com/api.php?format=json&action=query&prop=revisions&rvprop=content&titles=" + page["title"])
-                source = sock.read()
-                sock.close()
-
-                data = json.loads(source)
+                data = getJSON( "https://wiki.multitheftauto.com/api.php?format=json&action=query&prop=revisions&rvprop=content&titles=" + page["title"] )
+                if data is None:
+                    return
 
                 for k, page in data["query"]["pages"].items():
                     content = page["revisions"][0]["*"]
@@ -217,8 +223,8 @@ def OnMessageStatus ( message, status ):
                                 txt = txt + "\n" + syntax
                             else:
                                 # function without parameters
-                                txt = txt + "\nbrak parametrów".decode('utf-8')
-                message.Chat.SendMessage( txt )
+                                txt = txt + "\nbrak parametrów"
+                sendMessageToChat( message.Chat, txt )
 
             return
 
@@ -239,17 +245,12 @@ def OnMessageStatus ( message, status ):
                     link_end = len( message.Body )
 
             vidID = message.Body [ link_start : link_end ]
-            source = getURL( "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&key=AIzaSyDViQNqCB7CxTiqS5YiBogXVBykLUtrUmY&id=" + vidID )
-            if source is None:
+            data = getJSON( "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&key=AIzaSyDViQNqCB7CxTiqS5YiBogXVBykLUtrUmY&id=" + vidID )
+            if data is None:
                 return
-            try:
-                data = json.loads(source)
-
-                if len(data["items"]) > 0:
-                    title = data["items"][0]["snippet"]["title"]
-                    message.Chat.SendMessage('YT: ' + title)
-            except Exception:
-                return
+            if len(data["items"]) > 0:
+                title = data["items"][0]["snippet"]["title"]
+                sendMessageToChat( message.Chat, 'YT: ' + title)
             return
 
         # Steam game info
@@ -266,14 +267,9 @@ def OnMessageStatus ( message, status ):
                 link_end = len(message.Body)
 
             appID = message.Body [ link_start : link_end ]
-            data = getURL( 'http://store.steampowered.com/api/appdetails?appids=' + appID )
+            data = getJSON( 'http://store.steampowered.com/api/appdetails?appids=' + appID )
 
             if data is None:
-                return
-
-            try:
-                data = json.loads( data )
-            except Exception:
                 return
 
             if not data[appID]["success"]:
@@ -290,7 +286,7 @@ def OnMessageStatus ( message, status ):
                 price2 = str(data["price_overview"]["final"])[ -2 : ]
 
                 if data["price_overview"]["currency"] == "EUR":
-                    currency = "€".decode('utf-8')
+                    currency = "€"
                 else:
                     currency = "$"
 
@@ -302,13 +298,8 @@ def OnMessageStatus ( message, status ):
 
         # Steam featured games
         if message.Body == '!steam':
-            data = getURL('http://store.steampowered.com/api/featured/')
-            if not data:
-                return
-
-            try:
-                data = json.loads( data )
-            except Exception:
+            data = getJSON( 'http://store.steampowered.com/api/featured/' )
+            if data is None:
                 return
 
             txt = "Polecane:\n"
@@ -317,7 +308,7 @@ def OnMessageStatus ( message, status ):
                 if price1 == "":
                     price1 = "0"
                 price2 = str(game["final_price"])[ -2 : ]
-                txt = txt + game["name"] + " " + price1 + "." + price2 + "€".decode('utf-8')
+                txt = txt + game["name"] + " " + price1 + "." + price2 + "€"
                 if game["discounted"] and game["discount_percent"] > 0:
                     txt = txt + "[-" + str(game["discount_percent"]) + "%]"
                 txt = txt + "\n"
@@ -327,13 +318,8 @@ def OnMessageStatus ( message, status ):
         # TruckersMP various stuff
         if message.Body == '!ets' or message.Body == '!ats':
             # servers status
-            data = getURL('https://api.ets2mp.com/servers/')
+            data = getJSON('https://api.ets2mp.com/servers/')
             if data is None:
-                return
-
-            try:
-                data = json.loads( data )
-            except Exception:
                 return
 
             if data["error"] != "false":
@@ -350,15 +336,11 @@ def OnMessageStatus ( message, status ):
                     total_slots = total_slots + server["maxplayers"]
                 else:
                     txt = txt + " (offline)"
-            txt = txt + "\nŁącznie ".decode('utf-8') + str(total_players) + "/" + str(total_slots) + " graczy."
+            txt = txt + "\nŁącznie " + str(total_players) + "/" + str(total_slots) + " graczy."
 
             # game time
-            data = getURL( 'https://api.ets2mp.com/game_time/' )
+            data = getJSON( 'https://api.ets2mp.com/game_time/' )
             if data is not None:
-                try:
-                    data = json.loads( data )
-                except Exception:
-                    return
                 if data["error"]:
                     return
 
@@ -405,19 +387,19 @@ def OnMessageStatus ( message, status ):
                 downloads = source [ downloads_start : downloads_end ]
 
 
-                message.Chat.SendMessage( 'Community: ' + title + " @ " + author + " (" + downloads + " pobrań)".decode('utf-8') )
+                sendMessageToChat( message.Chat, 'Community: ' + title + " @ " + author + " (" + downloads + " pobrań)" )
             return
 
         if message.Body == '!topic':
-            message.Chat.SendMessage( 'Aktualny temat: ' + message.Chat.Topic )
+            sendMessageToChat( message.Chat, 'Aktualny temat: ' + message.Chat.Topic )
             return
 
         if message.Body.find('lenny') != -1:
-            message.Chat.SendMessage( "( ͡° ͜ʖ ͡°)".decode('utf-8') )
+            sendMessageToChat( message.Chat, "( ͡° ͜ʖ ͡°)" )
             return
 
         #if message.Body.find('!stats', 0, 6) == 0:
-        #    message.Chat.SendMessage("Statystyki dla chatu " + message.Chat.FriendlyName)
+        #    sendMessageToChat( message.Chat, "Statystyki dla chatu " + message.Chat.FriendlyName)
         #    return
 
         if message.Body.find('!bandit', 0, 8) == 0 or message.Body == "b":
@@ -462,7 +444,7 @@ def OnMessageStatus ( message, status ):
                 lines.insert( i, line )
                 txt = txt + "\n"
 
-            message = message.Chat.SendMessage( txt )
+            message = sendMessageToChat( message.Chat, txt )
 
             for o in range(1, 21):
                 time.sleep( 0.2 )
@@ -483,32 +465,24 @@ def OnMessageStatus ( message, status ):
             num_lines_noempty = sum(1 for line in open('skype.py') if line.rstrip())
             num_comments = sum(1 for line in open('skype.py') if line.find('#') != -1 ) - 2
 
-            message.Chat.SendMessage( "Składam się z ".decode('utf-8') + str(num_lines) + " linii. Wykluczając linie puste, liczba ta spada do ".decode('utf-8') + str(num_lines_noempty) + ". Mój kod zawiera około ".decode('utf-8') + str(num_comments) + " komentarzy." )
+            sendMessageToChat( message.Chat, "Składam się z " + str(num_lines) + " linii. Wykluczając linie puste, liczba ta spada do " + str(num_lines_noempty) + ". Mój kod zawiera około " + str(num_comments) + " komentarzy." )
             return
 
         if message.Body == "!btc" or message.Body == "!ltc":
-            data = getURL( 'https://www.bitmarket.pl/json/BTCPLN/ticker.json' )
+            data = getJSON( 'https://www.bitmarket.pl/json/BTCPLN/ticker.json' )
             if data is None:
-                return
-            try:
-                data = json.loads( data )
-            except Exception:
                 return
             txt = "1 BTC = " + str(data["last"]) + " PLN"            
-            data = getURL( 'https://www.bitmarket.pl/json/LTCPLN/ticker.json' )
+            data = getJSON( 'https://www.bitmarket.pl/json/LTCPLN/ticker.json' )
             if data is None:
                 return
-            try:
-                data = json.loads( data )
-            except Exception:
-                return
-            message.Chat.SendMessage( txt + "\n1 LTC = " + str(data["last"]) + " PLN" )
+            sendMessageToChat( message.Chat, txt + "\n1 LTC = " + str(data["last"]) + " PLN" )
 
         if message.Sender.Handle == "lopezloo":
             if message.Body.find("!nick ", 0, 6) == 0:
                 arg = message.Body[ message.Body.find(' ') + 1 : ]
                 skype.CurrentUser.DisplayName = arg
-                message.Chat.SendMessage( "Mój nowy nick to: ".decode('utf-8') + skype.CurrentUser.DisplayName )
+                sendMessageToChat( message.Chat, "Mój nowy nick to: " + skype.CurrentUser.DisplayName )
                 return
 
             #if message.Body.find("!delast", 0, 7) == 0:
@@ -537,7 +511,7 @@ def OnMessageStatus ( message, status ):
             if name is None:
                 return
 
-            message.Chat.SendMessage( "[" + severity + "/" + status + "] " + name + "\nhttps://bugs.mtasa.com/view.php?id=" + bugID )
+            sendMessageToChat( message.Chat, "[" + severity + "/" + status + "] " + name + "\nhttps://bugs.mtasa.com/view.php?id=" + bugID )
             return
                  
 skype.OnMessageStatus = OnMessageStatus
@@ -562,14 +536,8 @@ skype.OnCallStatus = OnCallStatus
 checkGithub_interval = 60*5 # in sec
 def checkGitHub ( ):
     global settings
-    print('checkGitHub')
-    sock = urllib.urlopen( "https://api.github.com/repos/multitheftauto/mtasa-blue/commits?client_id=29c28b58cce0387e19a5&client_secret=62c2157f307108b637a8258a9f5e6ec549b69fbd&per_page=5" )
-    source = sock.read()
-    sock.close()
-    
+    data = getJSON( "https://api.github.com/repos/multitheftauto/mtasa-blue/commits?client_id=29c28b58cce0387e19a5&client_secret=62c2157f307108b637a8258a9f5e6ec549b69fbd&per_page=5" )
     Timer( checkGithub_interval, checkGitHub ).start()
-
-    data = json.loads(source)
     for commit in reversed(data):
         date = commit["commit"]["committer"]["date"]
         commitTime = time.mktime(datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ").timetuple()) # timestamp
@@ -640,7 +608,7 @@ def findEntityID ( name, chatName ):
         print("found " + str(last["name"]) + " (" + str(last["ratio"]) + ")")
 
         if last["ratio"] < 0.4:
-            sendMessageToChat( chatName, "Nic nie znalazłem.".decode('utf-8') )
+            sendMessageToChat( chatName, "Nic nie znalazłem." )
             return
 
         if last["type"] == "element":
@@ -656,7 +624,7 @@ def findEntityID ( name, chatName ):
         elif last["type"] == "group":
             printEntitiesInGroup( data["catalog"]["groups"], last["name"], chatName )
         else:
-            sendMessageToChat( chatName, "Nic nie znalazłem.".decode('utf-8') )
+            sendMessageToChat( chatName, "Nic nie znalazłem." )
 
 def similarRatio (a, b):
     return SequenceMatcher(None, a, b).ratio()
