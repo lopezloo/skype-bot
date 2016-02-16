@@ -58,15 +58,15 @@ def saveSettings ( ):
         f.write( json.dumps(settings) )
         f.close()
 
-def sendMessageToChat ( chat, message ):
-    message = message
-    if type(chat) is Skype4Py.chat.Chat:
+def sendMessageToChat ( theChat, message ):
+    message = message.decode('utf-8')
+    if type(theChat) is Skype4Py.chat.Chat:
         # skype chat object
-        return chat.SendMessage( message )
+        return theChat.SendMessage( message )
     else:
         # chat name
         for chat in skype.Chats:
-            if chat.Name == chat:
+            if chat.Name == theChat:
                 return chat.SendMessage( message )
 
 def OnMessageStatus ( message, status ):
