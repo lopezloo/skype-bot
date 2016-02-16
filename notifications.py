@@ -2,13 +2,12 @@ checkGithub_interval = 60*5
 def checkGitHub ( ):
     global settings
     print('checkGitHub')
-    sock = urllib.urlopen( "https://api.github.com/repos/multitheftauto/mtasa-blue/commits?client_id=29c28b58cce0387e19a5&client_secret=62c2157f307108b637a8258a9f5e6ec549b69fbd&per_page=5" )
-    source = sock.read()
-    sock.close()
     
     Timer( checkGithub_interval, checkGitHub ).start()
+    data = getJSON( "https://api.github.com/repos/multitheftauto/mtasa-blue/commits?client_id=29c28b58cce0387e19a5&client_secret=62c2157f307108b637a8258a9f5e6ec549b69fbd&per_page=5" )
+    if data is None:
+        return
 
-    data = json.loads(source)
     for commit in reversed(data):
         date = commit["commit"]["committer"]["date"]
         commitTime = time.mktime(datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ").timetuple()) # timestamp
@@ -72,16 +71,8 @@ def checkFreeGamesSubreddit ( ):
     global settings
     Timer( 60*1, checkFreeGamesSubreddit ).start()
 
-    data = getURL( "https://www.reddit.com/r/freegamesonsteam/new.json?limit=1" )
-    if data is None:
-        return
-
-    try:
-        data = json.loads(data)
-    except Exception:
-        return
-
-    if "data" not in data:
+    data = getJSON( "https://www.reddit.com/r/freegamesonsteam/new.json?limit=1" )
+    if data is None or "data" not in data:
         return
 
     for link in data["data"]["children"]:
@@ -91,5 +82,3 @@ def checkFreeGamesSubreddit ( ):
             saveSettings()
 
 Timer( 60*1, checkFreeGamesSubreddit ).start()
-
-input("Skype bot started.\n")
