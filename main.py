@@ -4,6 +4,9 @@ import urllib, urllib2, json, time, re, time, datetime, sys, random
 from threading import Timer
 from difflib import SequenceMatcher
 
+reload(sys)  
+sys.setdefaultencoding('utf8')
+
 try:
     skype = Skype4Py.Skype()
     skype.Attach()
@@ -59,7 +62,6 @@ def saveSettings ( ):
         f.close()
 
 def sendMessageToChat ( theChat, message ):
-    message = message.decode('utf-8')
     if type(theChat) is Skype4Py.chat.Chat:
         # skype chat object
         return theChat.SendMessage( message )
