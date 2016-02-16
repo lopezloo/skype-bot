@@ -62,13 +62,12 @@ def sendMessageToChat ( chat, message ):
     message = message
     if type(chat) is Skype4Py.chat.Chat:
         # skype chat object
-        chat.SendMessage( message )
+        return chat.SendMessage( message )
     else:
         # chat name
         for chat in skype.Chats:
             if chat.Name == chat:
-                chat.SendMessage( message )
-                return
+                return chat.SendMessage( message )
 
 def OnMessageStatus ( message, status ):
     #if status == 'SENT' or status == 'RECEIVED':
