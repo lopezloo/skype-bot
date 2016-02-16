@@ -365,7 +365,7 @@ def OnMessageStatus ( message, status ):
                 gameTime = datetime.datetime(2015, 10, 25) + datetime.timedelta( minutes = data["game_time"] );
                 txt = txt + "\nCzas w grze: " + gameTime.strftime('%H:%M')
 
-            # song at TruckersFM; why you stopped working?
+            # song at TruckersFM
             data = getURL( 'http://truckers.fm/' )
             if data is not None:
                 song_start = data.find( '<span id="currently_playing"> <span id="song"><span class="song-details">' ) + 73
@@ -486,6 +486,24 @@ def OnMessageStatus ( message, status ):
             message.Chat.SendMessage( "Składam się z ".decode('utf-8') + str(num_lines) + " linii. Wykluczając linie puste, liczba ta spada do ".decode('utf-8') + str(num_lines_noempty) + ". Mój kod zawiera około ".decode('utf-8') + str(num_comments) + " komentarzy." )
             return
 
+        if message.Body == "!btc" or message.Body == "!ltc":
+            data = getURL( 'https://www.bitmarket.pl/json/BTCPLN/ticker.json' )
+            if data is None:
+                return
+            try:
+                data = json.loads( data )
+            except Exception:
+                return
+            txt = "1 BTC = " + str(data["last"]) + " PLN"            
+            data = getURL( 'https://www.bitmarket.pl/json/LTCPLN/ticker.json' )
+            if data is None:
+                return
+            try:
+                data = json.loads( data )
+            except Exception:
+                return
+            message.Chat.SendMessage( txt + "\n1 LTC = " + str(data["last"]) + " PLN" )
+
         if message.Sender.Handle == "lopezloo":
             if message.Body.find("!nick ", 0, 6) == 0:
                 arg = message.Body[ message.Body.find(' ') + 1 : ]
@@ -499,10 +517,6 @@ def OnMessageStatus ( message, status ):
             #            msg.Body = "x"
             #            return
             #    return
-
-            if message.Body.find("!test", 0, 5) == 0:
-                message.Chat.Topic = "test"
-                return
 
             #if message.Body.find("!delast", 0, 7) == 0:
             #    for msg in message.Chat.RecentMessages:
