@@ -75,7 +75,7 @@ def OnMessageStatus ( message, status ):
     if status == 'RECEIVED':
         print('OnMessageStatus RECEIVED: ' + message.Body.encode('utf-8'))
         if message.Body == "!help" or message.Body == "!pomoc" or message.Body == "!cmd" or message.Body == "!cmds":
-            txt = "!twitch [nick]\n!twitchtop [opcjonalnie kategoria] - top streamy z danej kategorii\n!hitbox [nick]\n!topic\n!lines - ilosć linii w kodzie\n!id [pojazd/kategoria]\n!steam\n!ets\n!bandit\n!btc"
+            txt = "!twitch [nick]\n!twitchtop [opcjonalnie kategoria] - top streamy z danej kategorii\n!hitbox [nick]\n!topic\n!lines - ilosć linii w kodzie\n!id [pojazd/kategoria]\n!steam\n!ets\n!bandit\n!btc\n!gtao"
             if message.Chat.Name == chats["mta"]:
                 txt = txt + "\n!w(iki) [tytuł]"
             sendMessageToChat( message.Chat,txt)
@@ -476,6 +476,29 @@ def OnMessageStatus ( message, status ):
             if data is None:
                 return
             sendMessageToChat( message.Chat, txt + "\n1 LTC = " + str(data["last"]) + " PLN" )
+
+        if message.Body == "!gtaonline" or message.Body == "!gtao" or message.Body == "!gta":
+            data = getURL( 'https://support.rockstargames.com/hc/en-us/articles/200426246-GTA-Online-Server-Status-Latest-Updates' )
+            if data is None:
+                sendMessageToChat( message.Chat, "Strona R* leży." )
+                return
+
+            pcWarn_start = data.find( '<div id="pcWarn">' ) + 17
+            pcWarn_end = data.find( '</div>', pcWarn_start )
+            pcWarn = data [ pcWarn_start : pcWarn_end ]
+
+            rsgsUpOrDown_start = data.find( '<div id="rsgsUpOrDown" data-rsgsupordown="', pcWarn_end ) + 42
+            rsgsUpOrDown_end = data.find( '"></div>', rsgsUpOrDown_start )
+            rsgsUpOrDown = data [ rsgsUpOrDown_start : rsgsUpOrDown_end ]
+
+            pcUpOrDown_start = data.find( '<div id="pcUpOrDown" data-upordown="', rsgsUpOrDown_end ) + 36
+            pcUpOrDown_end = data.find( '"></div>', pcUpOrDown_start )
+            pcUpOrDown = data [ pcUpOrDown_start : pcUpOrDown_end ]
+
+            txt = "Social Club: " + rsgsUpOrDown + "\nPC: " + pcUpOrDown
+            if pcWarn != "" and pcWarn != "no content":
+                txt = txt + "\nKomunikat: " + pcWarn
+            sendMessageToChat( message.Chat, txt )
 
         if message.Sender.Handle == "lopezloo":
             if message.Body.find("!nick ", 0, 6) == 0:
