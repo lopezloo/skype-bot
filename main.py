@@ -38,11 +38,17 @@ def getURL ( url ):
     return page.read()
 
 def getJSON ( url ):
-    data = getURL( url )
-    if data is None:
-        return
+    hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+       'Accept': 'application/json',
+       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+       'Accept-Encoding': 'none',
+       'Accept-Language': 'en-US,en;q=0.8',
+       'Connection': 'keep-alive'}
+
+    req = urllib2.Request(url, headers=hdr)
     try:
-        data = json.loads( data )
+        page = urllib2.urlopen(req)
+        data = json.loads( page.read() )
     except Exception:
         return
     return data
@@ -77,7 +83,9 @@ def OnMessageStatus ( message, status ):
     if status == 'RECEIVED':
         print('OnMessageStatus RECEIVED: ' + message.Body.encode('utf-8'))
         if message.Body == "!help" or message.Body == "!pomoc" or message.Body == "!cmd" or message.Body == "!cmds":
-            txt = "!twitch [nick]\n!twitchtop [opcjonalnie kategoria] - top streamy z danej kategorii\n!hitbox [nick]\n!topic\n!lines - ilosć linii w kodzie\n!id [pojazd/kategoria]\n!steam\n!ets\n!bandit\n!btc\n!gtao"
+            txt = "!twitch [nick]\n!twitchtop [opcjonalnie kategoria] - top streamy z danej kategorii\n!hitbox [nick]\n!topic\n\
+!lines - ilosć linii w kodzie\n!id [pojazd/kategoria]\n!steam\n!ets - status serwerów\n!bandit\n\
+!btc - przelicznik btc/pln i ltc/pln\n!gtao - status serwerów gtao\n!rct - status serwerów OpenRCT2"
             if message.Chat.Name == chats["mta"]:
                 txt = txt + "\n!w(iki) [tytuł]"
             sendMessageToChat( message.Chat,txt)
@@ -479,6 +487,7 @@ def OnMessageStatus ( message, status ):
                 return
             sendMessageToChat( message.Chat, txt + "\n1 LTC = " + str(data["last"]) + " PLN" )
 
+        # GTA Online PC servers status
         if message.Body == "!gtaonline" or message.Body == "!gtao" or message.Body == "!gta":
             data = getURL( 'https://support.rockstargames.com/hc/en-us/articles/200426246-GTA-Online-Server-Status-Latest-Updates' )
             if data is None:
@@ -502,26 +511,32 @@ def OnMessageStatus ( message, status ):
                 txt = txt + "\nKomunikat: " + pcWarn
             sendMessageToChat( message.Chat, txt )
 
+        # OpenRCT2 servers status
+        if message.Body == "!rct" or message.Body == "!orct" or message.Body == "!rct2" or message.Body == "!orct2":
+            data = getJSON( "https://servers.openrct2.website/" )
+            if data is None or data["status"] != 200:
+                sendMessageToChat( message.Chat, "Master server leży." )
+                return
+
+            total_players = 0
+            total_slots = 0
+            txt = "Serwery OpenRCT2:\n"
+            for server in data["servers"]:
+                if server["requiresPassword"]:
+                    txt = txt + " 🔒 "
+                else:
+                    txt = txt + "     "
+                txt = txt + server["name"] + " " + str(server["players"]) + "/" + str(server["maxPlayers"]) + " (" + server["ip"]["v4"][0] + ":" + str(server["port"]) + ")\n"
+                total_players = total_players + server["players"]
+                total_slots = total_slots + server["maxPlayers"]
+            sendMessageToChat( message.Chat, txt + "Łącznie " + str(total_players) + "/" + str(total_slots) + " graczy." )
+
         if message.Sender.Handle == "lopezloo":
             if message.Body.find("!nick ", 0, 6) == 0:
                 arg = message.Body[ message.Body.find(' ') + 1 : ]
                 skype.CurrentUser.DisplayName = arg
                 sendMessageToChat( message.Chat, "Mój nowy nick to: " + skype.CurrentUser.DisplayName )
                 return
-
-            #if message.Body.find("!delast", 0, 7) == 0:
-            #    for msg in message.Chat.RecentMessages:
-            #        if msg.IsEditable and msg.FromHandle == "lopez.bot":
-            #            msg.Body = "x"
-            #            return
-            #    return
-
-            #if message.Body.find("!delast", 0, 7) == 0:
-            #    for msg in message.Chat.RecentMessages:
-            #        if msg.IsEditable and msg.FromHandle == "lopez.bot":
-            #            msg.Body = "x"
-            #            return
-            #    return           
 
     if status == 'RECEIVED' or status == 'SENT':
         if (message.Chat.Name == chats["mta"] or message.Chat.Name == chats["test"]) and message.Body.find('#') != -1:
@@ -605,19 +620,6 @@ def checkMantis ( ):
     Timer( 60*10, checkMantis ).start()
 
 checkMantis()
-
-# Facepunch Prototypes checker
-#def checkPrototypes ( ):
-#    data = getURL( "http://prototypes.facepunch.com/" )
-#    if data is None:
-#        return
-#
-#    if data.find( '<div id="header">PROTOTYPES REMAINING:') != -1 and data.find( '<div id="header">PROTOTYPES REMAINING: 0</div>' ) == -1:
-#        sendMessageToChat ( chats["test"], "lopez, prototypy!\nhttp://prototypes.facepunch.com\n" + data )
-#    else:
-#        Timer( 60*10, checkPrototypes ).start()
-#
-#Timer( 60*10, checkPrototypes ).start()
 
 def findEntityID ( name, chatName ):
     with open("vehicles-sa.json") as f:
