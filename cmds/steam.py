@@ -3,7 +3,7 @@ import utils, skype, datetime
 from commands import Command
 
 def cmd_steam ( chat ):
-    data = getJSON( 'http://store.steampowered.com/api/featured/' )
+    data = utils.getJSON( 'http://store.steampowered.com/api/featured/' )
     if data is None:
         return
 
@@ -15,7 +15,7 @@ def cmd_steam ( chat ):
         price2 = str(game["final_price"])[ -2 : ]
         txt = txt + game["name"] + " " + price1 + "." + price2 + "€"
         if game["discounted"] and game["discount_percent"] > 0:
-            txt = txt + "[-" + str(game["discount_percent"]) + "%]"
+            txt = txt + " [-" + str(game["discount_percent"]) + "%]"
         txt = txt + "\n"
     skype.sendMessageToChat ( chat, txt )
 

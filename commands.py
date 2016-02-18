@@ -5,6 +5,7 @@ import json
 
 import skype
 import utils
+import notifications
 
 g_commands = []
 
@@ -71,7 +72,21 @@ class Command:
             skype.sendMessageToChat( chat, txt )
 
 def OnMessageStatus ( message, status ):
-    print("OnMessageStatus")
+    if status == 'RECEIVED' or status == 'SENT':
+        if (message.Chat.Name == skype.g_chats["mta"] or message.Chat.Name == skype.g_chats["test"]) and message.Body.find('#') != -1:
+            bugID_start = message.Body.find('#') + 1
+            bugID_end = message.Body.find(' ', bugID_start)
+            if bugID_end == -1:
+                bugID_end = len(message.Body)
+            bugID = message.Body [ bugID_start : bugID_end ]
+
+            name, severity, status = notifications.checkMantisBug ( bugID )
+            if name is None:
+                return
+
+            skype.sendMessageToChat( message.Chat, "[" + severity + "/" + status + "] " + name + "\nhttps://bugs.mtasa.com/view.php?id=" + bugID )
+            return
+
     if status == 'RECEIVED':
         for command in g_commands:
             #if message.Body.find(command.name) == 0:
